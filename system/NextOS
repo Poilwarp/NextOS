@@ -1,0 +1,127 @@
+import os
+import sys
+import threading
+import subprocess
+import platform
+import random
+import time
+os.chdir("../driver")
+sys.path.insert(0, "../driver")
+from running import run
+
+programms = ""
+
+def help():
+    print("=" * 77)
+    print("=                                NextOS 3.0                                 =")
+    print("=" * 77)
+    print("= команды:                                                                  =")
+    print("= calc-калькулятор                                                          =")
+    print("= WiFi-WiFi менеджер                                                        =")
+    print("= math game-математеческая игра                                             =")
+    print("= word game-игра слово из букв                                              =")
+    print("= exit-выход из программы                                                   =")
+    print("= config-настройка ОС                                                       =")
+    print("= info-информация об устройстве                                             =")
+    print("= help-список команд                                                        =")
+    print("= cls-очистка экрана                                                        =")
+    print("= files-файловый менеджер                                                   =")
+    print("= pkg-обнаружение внешних пакетов")
+    print("=" * 77)
+help()
+
+def ads_show():
+    ads = ["\nNext Product - уже в будущем, уже следующие, Next Product твой следующий выбор!","\nтут могла бы быть ваша реклама"]
+    time.sleep(5)
+    print(random.choice(ads))
+ 
+ads = threading.Thread(target = ads_show)
+ads.start()    
+
+while True:
+    cmd = input(">>> ")
+    
+    if cmd == "calc":
+        os.chdir("../math")
+        sys.path.insert(0, "../math")
+        run("calc.py")
+        
+    elif cmd == "WiFi":
+        os.chdir("../program")
+        sys.path.insert(0, "../program")
+        run("WiFi_manager.py")
+        
+    elif cmd == "info":
+        print("=" * 32, "инфоммация", "=" * 33)
+        print(f"система: NextOS 3.0")
+        print(f"архитектура: {platform.machine()}")
+        print(f"процессор: {platform.processor()}")
+        
+    elif cmd == "help":
+        help()   
+        
+    elif cmd == "cls":
+        os.system('cls' if os.name == 'nt' else 'clear')
+        help()
+    elif cmd == "files":
+        os.chdir("../program")
+        sys.path.insert(0, "../program")
+        run("file_manager.py")
+    elif cmd == "config":
+        os.chdir("../file system")
+        sys.path.insert(0, "../file system")
+        choice = int(input("""выберите команду:
+1 - загрузка настроек
+2 - запись настроек
+команда: """))
+        if choice == 1:             
+            with open("config.txt", "r") as config:     
+                conf = config.read()   
+                statement = input(f"загрузить настройки: \n{conf} ? \n да/нет ?: ")
+                if statement == "да":
+                    if conf == "classic":
+                        sys.stdout.write("\033[32;40m")
+                    if conf == "custom 1":
+                        sys.stdout.write("\033[31;40m")
+                    if conf == "start":
+                        sys.stdout.write("\033[37;40m")                                   
+                if statement == "нет":
+                    continue        
+        if choice == 2:             
+            with open("config.txt", "w") as config:   
+                theme = int(input("""пожайлуста введите тему:
+1 - классическая тема. Чёрный фон с зелёным текстом
+2 - начальная тема. Чёрный фон с белым текстом
+3 - кастомная тема №1. Чёрный фон с красным текстом
+тема: """))
+                if theme == 1:
+                    config.write("classic")
+                    continue
+                if theme == 2:
+                    config.write("start")
+                    continue
+                if theme == 3:
+                    config.write("custom 1")    
+                    continue                  
+    elif cmd == "pkg":
+        os.chdir("../pkg")
+        sys.path.insert(0, "../pkg")
+        programms = os.listdir()
+        if not programms:
+            print("дополнительних пакетов не найдено")
+            continue
+            
+        print("найденные программы: ", ", ". join(programms))  
+        statement = input("вы хотите установить дополнительные программы? (да/нет)")  
+        if statement == "да":
+            os.chdir("../pkg")
+            sys.path.insert(0, "../pkg")
+    elif cmd in programms:
+        run(cmd) 
+                   
+    if cmd == "math game":
+        run("math game.py")
+    if cmd == "word game":
+        run("word game.py")
+    else:
+        print(f"не найдено подходящей команды: {cmd}")                                         
